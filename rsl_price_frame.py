@@ -164,7 +164,10 @@ class RSL(ctk.CTkFrame):
         self.master.bind('<Return>', lambda event: self.save())
 
     def save(self):
-        self.rsl_price["Retail"] = "{:.2f}".format(float(self.price_entry.get()))
+        price = float(self.price_entry.get())
+        price_str = "{:.2f}".format(price)
+        self.rsl_price["Retail"] = price_str
+
         self.master.update_row(self.idx, self.rsl_price)
         self.clear_fields()
         self.curr_idx += 1

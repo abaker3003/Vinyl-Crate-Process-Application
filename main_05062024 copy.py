@@ -17,6 +17,10 @@ ctk.set_default_color_theme("red.json")
 
 class Main(ctk.CTk):
 
+    """
+    The main class for the All That Music & Video Crate Process application.
+    """
+
     def __init__(self):
         super().__init__()
         
@@ -379,9 +383,10 @@ class Main(ctk.CTk):
         print("Idxs that need printing: " + str(self.needs_print))
         print("Entering into section6 method")
 
-        self.tree_frame = ctk.CTkScrollableFrame(self, orientation="vertical")
-        self.tree_frame.grid(row=1, column=0, columnspan=7, padx=10, pady=15, sticky="nsew")
+        self.tree_frame = ctk.CTkScrollableFrame(self, height=300, orientation='horizontal')
+        self.tree_frame.grid(row=1, column=0, columnspan=7, sticky='nsew', padx=10, pady=10)
 
+        self.tree_frame.rowconfigure(0, weight=1)
         self.tree_frame.columnconfigure(0, weight=1)
 
         # Get the actual column names from self.xl_handle
@@ -390,28 +395,30 @@ class Main(ctk.CTk):
         columns.pop(-1)
 
         style = ttk.Style()
-        style.configure('MyStyle.Treeview', rowheight=55,
-                font=('Helvetica', 12))
+        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
+        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
+        style.map("mystyle.Treeview", background=[('selected', 'blue')], foreground=[('selected', 'white')])
 
-        self.treeview = ttk.Treeview(self.tree_frame, columns=columns, show="headings", style='MyStyle.Treeview')
-        self.treeview.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
-        
-        self.scrollbar = ttk.Scrollbar(self.tree_frame, orient="horizontal")
-        self.scrollbar.grid(row=2, column=0, columnspan=2, sticky="nsew")
-        self.treeview.configure(xscrollcommand=self.scrollbar.set)
-        self.scrollbar.configure(command=self.treeview.xview)
+        # Create the Treeview
+        self.treeview = ttk.Treeview(self.tree_frame,
+                                    columns=columns,
+                                    show="headings", height=20, style="mystyle.Treeview")
 
-        # Add column headings
-        for col in columns:
-            self.treeview.heading(col, text=col)
-            if col == "Notes":
-                self.treeview.column(col, width=500, stretch= True)
-            elif col == "Qty":
-                self.treeview.column(col, width=20)
-            elif col == "Assignment":
-                self.treeview.column(col, width=150)
+        self.treeview.grid(row=0, column=0, sticky='nsew', padx=10, pady=5)
+        self.treeview.grid_columnconfigure(0, weight=1)
+        self.treeview.grid_rowconfigure(0, weight=1)
+
+        for column in columns:
+            self.treeview.heading(column, text=column)
+            if column == "Notes":
+                self.treeview.column(column, width=500, stretch= True)
+            elif column == "Qty":
+                self.treeview.column(column, width=20)
+            elif column == "Assignment":
+                self.treeview.column(column, width=150)
             else:
-                self.treeview.column(col, width=100)
+                self.treeview.column(column, width=100)
 
         df = self.xl_handle.read_into_dataframe()
 
@@ -420,29 +427,19 @@ class Main(ctk.CTk):
             values = [df.loc[idx, col] for col in columns]
             self.treeview.insert("", "end", values=values)
 
-        self.treeview.bind("<Button-1>", self.on_column_click)
-
-        self.treeview.configure(xscrollcommand=self.scrollbar.set)
-        self.scrollbar.configure(command=self.treeview.xview)
+        self.vert_scroll = ttk.Scrollbar(self.tree_frame, command=lambda e: self.treeview.yview(e), orient=ctk.VERTICAL)
+        self.vert_scroll.grid(row=0, column=1, sticky='ns')
+        self.treeview.configure(yscrollcommand=self.vert_scroll.set)
+        self.vert_scroll.config(command=self.treeview.yview)
 
         self.print_frame = ctk.CTkFrame(self)
         self.print_frame.grid(row=2, column=0, columnspan=7, padx=10, pady=15, sticky="nsew")
-
 
         label = ctk.CTkLabel(self.print_frame, text="Ready to print?", font=("Courier New Greek", 18))
         label.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
 
         confirm = ctk.CTkButton(self.print_frame, text="Confirm", command=lambda: threading.Thread(target=self.section6_confirm).start(), font=("Courier New Greek", 18))
         confirm.grid(row=0, column=1, sticky='nsew', padx=10, pady=10)
-    
-    def on_column_click(self, event):
-        print(event)
-        col = event.widget.identify_column(event.x)
-        if col == "#0":
-            width = 750
-        else:
-            width = 100
-        event.widget.column(col, width=width+10)
 
     def section6_confirm(self):
         print("Confirmed")
