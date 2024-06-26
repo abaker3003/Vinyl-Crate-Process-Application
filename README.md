@@ -26,6 +26,7 @@ The **All That Music & Video Crate Process** application is a cutting-edge graph
 - **Memory:** 4 GB RAM or more.
 - **Storage:** 500 MB available disk space.
 - **Microsoft Excel:** Required for data management and printing functionalities.
+- **Google Gemini API Key:** Required in an aip_key.json file
 
 ---
 
