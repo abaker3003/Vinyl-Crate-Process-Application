@@ -23,7 +23,7 @@ class AI_Frame(ctk.CTkFrame):
     def desc(self):
         self.display_text = "Condition: " + str(self._condition)
         self.display_text += "\nVinyl Damage Dict: " + str(self._vinyl_dmg)
-        print("Vinyl: " + str(self._vinyl_dmg))
+        #print("Vinyl: " + str(self._vinyl_dmg))
         self.intro = self._intros_outros[0]
         self.outro = self._intros_outros[1]
         self.display_text += "\nIntro: " + self.intro

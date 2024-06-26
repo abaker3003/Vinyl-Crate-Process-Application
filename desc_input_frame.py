@@ -124,7 +124,7 @@ class DescriptionInputFrame(ctk.CTkFrame):
         save_button = ctk.CTkButton(self, text="Next Record\nIn Crate", command=self.save, font=("Courier New Greek", 22))
         save_button.grid(row=15, column=6, columnspan=1, pady=20, padx=10, sticky="ew")
 
-        done_button = ctk.CTkButton(self, text="End Pre-Prep\nStart Grading", command=self.done, font=("Courier New Greek", 22))
+        done_button = ctk.CTkButton(self, text="NEXT \n►", command=self.done, font=("Courier New Greek", 22), fg_color="yellow", hover_color="red", text_color="black")
         done_button.grid(row=15, column=4, columnspan=1, pady=20, padx=(30, 0), sticky="ew")
     
     def close_entry(self):
@@ -186,7 +186,7 @@ class DescriptionInputFrame(ctk.CTkFrame):
 
         if self.master.new_crate and (not self.check_fields_finishing() or self.all_fields_empty()): 
             self.empty_fields()
-            print("nEW cRATE: " + str(self.master.new_crate))
+            #print("nEW cRATE: " + str(self.master.new_crate))
             return
         
         if unfilled == 0:
@@ -195,7 +195,7 @@ class DescriptionInputFrame(ctk.CTkFrame):
             self.master.start()
         else:
             self.empty_fields()
-            print("SOME NOT FILLED OUT!")
+            #print("SOME NOT FILLED OUT!")
             return
 
         self.master.new_crate = False
@@ -294,13 +294,13 @@ class DescriptionInputFrame(ctk.CTkFrame):
         return False
     
     def check_empty_finishing(self):
-        print("Artist: " + self.artist_text.get())
-        print("Title: " + self.title_text.get())
-        print("Type: " + self.types.get())
-        print("Label: " + self.label.get())
-        print("Label #: " + self.label_number.get())
-        print("LOC: " + self._loc.get())
-        print("Year: " + self.year_entry.get())
+        #print("Artist: " + self.artist_text.get())
+        #print("Title: " + self.title_text.get())
+        #print("Type: " + self.types.get())
+        #print("Label: " + self.label.get())
+        #print("Label #: " + self.label_number.get())
+        #print("LOC: " + self._loc.get())
+        #print("Year: " + self.year_entry.get())
         
         self.empty_fields()
         if len(self.artist_text.get()) >= 1 and len(self.title_text.get()) >=1 and self.types.get() != "None" and len(self.label.get()) >= 1 and len(self.label_number.get()) >= 1 and len(self._loc.get()) >= 1 and len(self.year_entry.get()) >= 1:
@@ -344,7 +344,7 @@ class Enter_QTY(ctk.CTkToplevel):
             self.destroy()
 
     def display(self):
-        print("TOP LEVEL WINDOW QTY START")
+        #print("TOP LEVEL WINDOW QTY START")
 
         self.bind("<Key>", self.handle_key_event)
 

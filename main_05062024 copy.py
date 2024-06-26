@@ -1,3 +1,4 @@
+import textwrap
 import threading
 from tkinter import ttk
 import customtkinter as ctk
@@ -174,7 +175,7 @@ class Main(ctk.CTk):
 
 
                 elif prog == "  PRINT  " or txt.startswith("RSL"):
-                    print(txt + " : checklist")
+                    #print(txt + " : checklist")
                     # PLACE IN THE COLUMN FOR PREPREP, GRADING, HIGHLIGHTS, INTRO, AND RSL /\nPRICE
                     ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=2, pady=10, sticky='nsew', padx=10)
                     
@@ -197,7 +198,7 @@ class Main(ctk.CTk):
     def create_file_handler(self, file, crate_num):
         self.selected_file = file
 
-        print(str(crate_num) + " selected")
+        #print(str(crate_num) + " selected")
         
         self.title("LP CRATE - " + self.selected_file)
         self.xl_handle = xl.open_excel_file(self.selected_file)
@@ -271,7 +272,7 @@ class Main(ctk.CTk):
             self.section6_start(self.current_crate_num)
             
         else:
-            print("Does not start with RSL")
+            #print("Does not start with RSL")
             self.current_crate_num = int(crate_num)
 
             #print("FUNCTION current_crate_number -- crate: " + str(self.current_crate_num))
@@ -314,7 +315,7 @@ class Main(ctk.CTk):
         self.needs_rsl = self.xl_handle.get_row_indexes_needing_RSL(self.current_crate_num)
         #print("Indexes that need RSL: " + str(self.needs_rsl))
         self.needs_description = self.xl_handle.get_row_indexes_needing_intro(self.current_crate_num)
-        print("Indexes that need INTRO: " + str(self.needs_description))
+        #print("Indexes that need INTRO: " + str(self.needs_description))
 
         if len(self.needs_grading) != 0:
             self.progress_frame.set_progress("  GRADING  ")
@@ -380,10 +381,10 @@ class Main(ctk.CTk):
         self.clear()
         self.display_bars()
         self.needs_print = self.xl_handle.get_row_indexes_needing_printing(ref_num)
-        print("Idxs that need printing: " + str(self.needs_print))
-        print("Entering into section6 method")
+        #print("Idxs that need printing: " + str(self.needs_print))
+        #print("Entering into section6 method")
 
-        self.tree_frame = ctk.CTkScrollableFrame(self, height=300, orientation='horizontal')
+        self.tree_frame = ctk.CTkScrollableFrame(self, height=500, orientation='horizontal')
         self.tree_frame.grid(row=1, column=0, columnspan=7, sticky='nsew', padx=10, pady=10)
 
         self.tree_frame.rowconfigure(0, weight=1)
@@ -395,8 +396,8 @@ class Main(ctk.CTk):
         columns.pop(-1)
 
         style = ttk.Style()
-        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 11)) # Modify the font of the body
-        style.configure("mystyle.Treeview.Heading", font=('Calibri', 13,'bold')) # Modify the font of the headings
+        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Calibri', 13), rowheight=90) # Modify the font of the body
+        style.configure("mystyle.Treeview.Heading", font=('Calibri', 15,'bold')) # Modify the font of the headings
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
         style.map("mystyle.Treeview", background=[('selected', 'blue')], foreground=[('selected', 'white')])
 
@@ -412,9 +413,9 @@ class Main(ctk.CTk):
         for column in columns:
             self.treeview.heading(column, text=column)
             if column == "Notes":
-                self.treeview.column(column, width=500, stretch= True)
+                self.treeview.column(column, width=650, stretch= True)
             elif column == "Qty":
-                self.treeview.column(column, width=20)
+                self.treeview.column(column, width=40)
             elif column == "Assignment":
                 self.treeview.column(column, width=150)
             else:
@@ -425,6 +426,7 @@ class Main(ctk.CTk):
         # Insert the rows of data into the treeview
         for idx in self.needs_print:
             values = [df.loc[idx, col] for col in columns]
+            values[-1] = '\n'.join(textwrap.wrap(values[-1], 80))
             self.treeview.insert("", "end", values=values)
 
         self.vert_scroll = ttk.Scrollbar(self.tree_frame, command=lambda e: self.treeview.yview(e), orient=ctk.VERTICAL)
@@ -442,7 +444,7 @@ class Main(ctk.CTk):
         confirm.grid(row=0, column=1, sticky='nsew', padx=10, pady=10)
 
     def section6_confirm(self):
-        print("Confirmed")
+        #print("Confirmed")
         self.clear()
         self.progress_frame.set_progress("  Print  ")
         self.display_bars()

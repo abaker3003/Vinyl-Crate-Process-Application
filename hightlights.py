@@ -236,7 +236,7 @@ class Frame2(ctk.CTkFrame):
 
         i = 0
         for item, var in self.second_set.items():
-            print(item)
+            #print(item)
             if "(Insert edit)" in item:
                 insert_edit_checkb = ctk.CTkCheckBox(self.highlight_entry_frame, text="", variable=var, onvalue=item, offvalue="None", width=10)
                 insert_edit_checkb.grid(row=i, column=4, pady=3, padx=(5,0), sticky="")
@@ -251,7 +251,7 @@ class Frame2(ctk.CTkFrame):
 
         i = 0
         for item, var in self.third_set.items():
-            print(item)
+            #print(item)
             if "(Insert edit)" in item:
                 insert_edit_checkb = ctk.CTkCheckBox(self.highlight_entry_frame, text="", variable=var, onvalue=item, offvalue="None", width=10)
                 insert_edit_checkb.grid(row=i, column=8, pady=3, padx=(5,0), sticky="")
@@ -267,7 +267,7 @@ class Frame2(ctk.CTkFrame):
 
         i = 0
         for item, var in self.fourth_set.items():
-            print(item)
+            #print(item)
             if "(Insert edit)" in item:
                 insert_edit_checkb = ctk.CTkCheckBox(self.highlight_entry_frame, text="", variable=var, onvalue=item, offvalue="None", width=10)
                 insert_edit_checkb.grid(row=i, column=12, pady=3, padx=(5,0), sticky="")
@@ -339,7 +339,7 @@ class Frame2(ctk.CTkFrame):
                     else:
                         self.selected_highlights.append(value.upper())
 
-        print("Highlights: " + str(self.selected_highlights))
+        #print("Highlights: " + str(self.selected_highlights))
 
         for highlight in self.selected_highlights:
             self.addit_info['Notes'] += highlight + " "

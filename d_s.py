@@ -327,31 +327,31 @@ class Sev_List(ctk.CTkToplevel):
         clicked_widget = event.widget
 
         if var.get() != "None" and var.get() != svrty:
-            print("Empty widget value")
+            #print("Empty widget value")
             var.set("None")
             return
          
-        print("selected widget: ", svrty)
-        print("current widget value: ", var.get())
+        #print("selected widget: ", svrty)
+        #print("current widget value: ", var.get())
 
         
         if var.get() == "None" and svrty in self.selected_svrties:
-            print("Removing activated")
+            #print("Removing activated")
             self.selected_svrties.remove(svrty)
         elif var.get() != "None" and svrty not in self.selected_svrties:
-            print("Adding activated")
+            #print("Adding activated")
             self.selected_svrties.append(svrty)
 
         self.update_checked_amount()
-        print("update of checked amount: ", self.checked_amt)
+        #print("update of checked amount: ", self.checked_amt)
 
         if self.checked_amt < 2:
-            print("Normalizing all widgets...")
+            #print("Normalizing all widgets...")
             for widget in self.scroll_frame.winfo_children():
                 if isinstance(widget, ctk.CTkCheckBox):
                     widget.configure(state='normal')
         elif self.checked_amt >= 2:
-            print("Disabling the following unchecked widgets...")
+            #print("Disabling the following unchecked widgets...")
             for widget in self.scroll_frame.winfo_children():
                 if isinstance(widget, ctk.CTkCheckBox):
                      if widget.cget("onvalue") not in self.selected_svrties:
