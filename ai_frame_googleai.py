@@ -3,8 +3,6 @@ import os
 import xlfile as xl
 import json
 
-import google.generativeai as genai
-
 from llamaapi import LlamaAPI
 
 
