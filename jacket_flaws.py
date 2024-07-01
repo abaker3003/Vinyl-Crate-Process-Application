@@ -832,7 +832,7 @@ class Jacket_Flaws(ctk.CTkFrame):
             self.display_sentence()
     
         else:
-            self.display_sentence("Need to select BOTH general and otherwise AS WELL AS up to 3 flaws")
+            self.display_sentence("Need to select BOTH general and otherwise AS WELL AS up to 3 flaws and hit \"Generate\" again")
     
     def toggle_severity_selection_toplevel(self, event, flaw, var, first_word):
 

@@ -5,11 +5,14 @@ import json
 
 import google.generativeai as genai
 
+from llamaapi import LlamaAPI
+
 
 
 class AI_Frame(ctk.CTkFrame):
     def  __init__(self, master, intros_outros=None, condition=None, vinyl_dmg=None, **kwargs):
         super().__init__(master, **kwargs)
+
         self.configure( width=900, height=600)
         self._condition = condition
         self._vinyl_dmg = vinyl_dmg
@@ -21,18 +24,10 @@ class AI_Frame(ctk.CTkFrame):
 
 
     def desc(self):
-        self.display_text = "Condition: " + str(self._condition)
-        self.display_text += "\nVinyl Damage Dict: " + str(self._vinyl_dmg)
-        #print("Vinyl: " + str(self._vinyl_dmg))
-        self.intro = self._intros_outros[0]
-        self.outro = self._intros_outros[1]
-        self.display_text += "\nIntro: " + self.intro
+        
+        self.vinyl_sentence = self._intros_outros[0]
+        self.jacket_sentence = self._intros_outros[1]
 
-        
-        
-
-        # ---> FILE HANDLING <--- #
-        
         current_dir = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.join(current_dir, 'Book1.xlsx')
 
@@ -47,67 +42,52 @@ class AI_Frame(ctk.CTkFrame):
         description_list = filtered_xl_read['Description'].tolist()
         self.description_list = ", ".join(description_list)
 
-
         options = [
             "traces", "handling traces", "hairline", "hairlines", "sleeve dust",
             "sleeve rubs", "scuffings", "scuffs", "markings", "marks",
             "blemishing", "blemishes", "prints", "spindle marks", "ring wear",
             "corner wear", "NO DAMAGE"
         ]
-        
 
-        # Load the API key from the JSON file
-        with open('api_key.json') as f:
+        api_key_file = os.path.join(current_dir, 'api_key.json')
+        with open(api_key_file) as f:
             keys = json.load(f)
-            GOOGLE_API_KEY = keys['GOOGLE_API_KEY']
+            LLAMA_API_KEY = keys['LLAMA_API_KEY']
 
-        # Configure the genai with the API key
-        genai.configure(api_key=GOOGLE_API_KEY)
+        llama = LlamaAPI(LLAMA_API_KEY)
 
-        # Create a generative model
-        model = genai.GenerativeModel('gemini-1.5-pro-latest')
+        api_request_json = {
+            "messages": [
+                {"role": "user", "content": "PLEASE LEAVE DESCRIPTION IN 1 SENTENCE AND ONLY USE THE DAMAGES/SEVERITIES PROVIDED IN THE DICTIONARY: Based on the list of example descriptions in the dataset for the condition " + str(self._condition) + ": " + self.description_list + ", please modify the following stentence templates and replace the parentheses and the text within with the corresponding damage:severity dictionaries:\n"
+                                               "\"" + self.vinyl_sentence + "\" : " + str(self._vinyl_dmg) + "\n"},
+            ],
+            "stream": False,
+            "function_call": "generate_text",
+        }
 
-        # -->--> Prompt usng the common words/phrases <--<-- #
-
-        prompt = "PLEASE LEAVE DESCRIPTION IN 1 SENTENCE AND ONLY USE THE DAMAGES/SEVERITIES PROVIDED IN THE DICTIONARY: Based on the list of example descriptions in the dataset for the condition " + str(self._condition) + ": " + self.description_list + ", please modify the following stentence templates and replace the parentheses and the text within with the corresponding damage:severity dictionaries:\n"
-
-        prompt += "\"" + self.intro + "\" : " + str(self._vinyl_dmg) + "\n"
-
-        '''prompt += "Also, revise the following jacket sentence and edit as needed:\n"
-
-        prompt += "\"" + self.outro + "\"\n"
-        
-        prompt += "Please put the two final sentences together with proper grammer and punctuation. No extra characters. This needs to be displayed as a Vynil description ready to print.\n**Also** please review the resulting description and clean it up and necessary"'''
-
-        
-        self.response_google = model.generate_content(prompt)  # Replace max_tokens with max_length
+        response = llama.run(api_request_json)
+        self.response_llama = response.json()["messages"][-1]["content"]
         self.AIDescriptionDiag_googleai = ctk.CTkFrame(self, height=600, width=900)
         self.AIDescriptionDiag_googleai.grid(row=0, column=5, columnspan=5, rowspan=3, sticky='nsew', padx=10, pady=10)
         self.AIDescriptionDiag_googleai.columnconfigure(0, weight=1)
         self.AIDescriptionDiag_googleai.rowconfigure(0, weight=1)
-        self.ai_description(self.response_google, self.AIDescriptionDiag_googleai)
-        
-        
-    def ai_description(self, message, frame):
+        self.ai_description(self.response_llama, self.AIDescriptionDiag_googleai)
 
-        self.AIDescription_label = ctk.CTkLabel(frame, text="GoogleAI Description", font=("Courier New Greek", 22))
+        self.AIDescription_label = ctk.CTkLabel(self.AIDescriptionDiag_googleai, text="LLAMA Description", font=("Courier New Greek", 22))
 
         self.AIDescription_label.grid(row=0, column=0, columnspan=2, pady=20, padx=20, sticky='e')
 
-        AIDescription_text = ctk.CTkTextbox(frame,
+        AIDescription_text = ctk.CTkTextbox(self.AIDescriptionDiag_googleai,
                                             height=300,
                                             width=425, wrap="word", font=("Courier New Greek", 20))
         AIDescription_text.configure(state="normal")
         AIDescription_text.delete("0.0", ctk.END)
-        
-        AIDescription_text.insert("0.0", message.text + self.outro)
 
-        #insert self.outro on next line
-        '''AIDescription_text.insert("4.0", self.outro)'''
+        AIDescription_text.insert("0.0", self.response_llama + self.outro)
 
         AIDescription_text.grid(row=1, column=0, columnspan=3, pady=20, padx=20, sticky='nsew')
-        frame.columnconfigure(0, weight=1)
-        frame.rowconfigure(1, weight=1)
+        self.AIDescriptionDiag_googleai.columnconfigure(0, weight=1)
+        self.AIDescriptionDiag_googleai.rowconfigure(1, weight=1)
         self.responses.append(AIDescription_text)
 
 
