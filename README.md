@@ -34,6 +34,4 @@ The **All That Music & Video Crate Process** application is a cutting-edge graph
 
 ©️ Copyright 2023 All That Music & Video. All rights reserved.
 
-Enhance your music and video store's efficiency and productivity with the **All That Music & Video Crate Process** application today!
-
 ---
