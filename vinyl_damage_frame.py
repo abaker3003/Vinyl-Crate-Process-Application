@@ -125,8 +125,7 @@ class Vinyl_Damages(ctk.CTkFrame):
         self.tree.grid(row=2, column=0, columnspan=6, rowspan=4, padx=5, pady=5, sticky='nsew')
 
         ctk.CTkLabel(self, text="Selected:", font=("Arial", 21, UNDERLINE)).grid(row=6, column=0, sticky="e", pady=5, padx=5)
-
-        
+      
 
     def add_selected_flaws(self, dmg, svrty):
         s = ""

@@ -750,7 +750,7 @@ class Jacket_Flaws(ctk.CTkFrame):
             for j, parts in enumerate(section):
                 if isinstance(parts, list):
                     flaw_name = parts[0]
-                    print(flaw_name, end=" ")
+                    #print(flaw_name, end=" ")
                     if flaw_name.startswith("top & bottom"):
                         i = 0
                         add = 6
@@ -758,12 +758,12 @@ class Jacket_Flaws(ctk.CTkFrame):
                     var = self.flaw_vars[flaw_name]
                     flaw_box = ctk.CTkCheckBox(self.sections_tab.tab("Seams"), text=flaw_name, onvalue=flaw_name, offvalue="None", width=2, height=1, font=("Lucida Sans", 14), variable=var)
                     flaw_box.grid(row=j + 4 + add, column=i, sticky='nsew', padx=10, pady=10)
-                    print(" - ROW: " + str(j + 4 + add) + "COL: " + str(i))
+                    #print(" - ROW: " + str(j + 4 + add) + "COL: " + str(i))
                     flaw_box.bind("<Button-1>", lambda event, flaw_name=flaw_name, flaw_details=parts[1], var=var: self.add_to_list(event,  flaw_details, flaw_name, var))
                     self.checkboxes.append(flaw_box)
                 else:
                     flaw = list(parts.items())[0][0]
-                    print(flaw, end=" ")
+                    #print(flaw, end=" ")
                     details = list(parts.items())[0][1]
                     if isinstance(details, dict):
                         first_word = list(details.keys())[0]
@@ -773,7 +773,7 @@ class Jacket_Flaws(ctk.CTkFrame):
                         seams_box = ctk.CTkCheckBox(self.sections_tab.tab("Seams"), text=flaw, onvalue=flaw, offvalue="None", width=2, height=1, font=("Lucida Sans", 14), variable=var)
                         self.checkboxes.append(seams_box)
                         seams_box.grid(row=j + 4, column=i, sticky='nsew', padx=10, pady=10)
-                        print(" - ROW: " + str(j + 4) + "COL: " + str(i))
+                        #print(" - ROW: " + str(j + 4) + "COL: " + str(i))
                         if len(svrty) > 0:
                             seams_box.bind("<Button-1>", lambda event, flaw=flaw, var=var, svrty=svrty, first_word=first_word: self.toggle_severity_selection(event, svrty, flaw, var, first_word))
                         else:
@@ -805,7 +805,7 @@ class Jacket_Flaws(ctk.CTkFrame):
         for i, last in enumerate(self.otherwise_list):
             ctk.CTkRadioButton(self.otherwise_frame.tab("Otherwise"), text=last, variable=self.otherwise_var, value=", otherwise " + last, font=("Lucida Sans", 14)).grid(row=i + 2, column=0, sticky='nsew', padx=10, pady=10)
 
-        generate_btn = ctk.CTkButton(self, text="GENERATE", command=lambda: self.verify_selected_options())
+        generate_btn = ctk.CTkButton(self, text="Sentence Preview", command=lambda: self.verify_selected_options())
         generate_btn.grid(row=4, column=0, columnspan=6)
         self.sentence_display = ctk.CTkLabel(self, text="", font=("Courier New Greek", 16))
         self.sentence_display.grid(row=5, column=0, columnspan=6, sticky="nsew")
@@ -872,10 +872,11 @@ class Jacket_Flaws(ctk.CTkFrame):
         if not new_sentence:
             self.sentence_display.configure(text=self.jacket_string)
         else:
+            self.jacket_string = new_sentence
             self.sentence_display.configure(text=new_sentence)
+            self.master.next_btn.configure(state="normal")
 
-    def get_jacket_string(self):
-        return self.jacket_string
+    
 
     def toggle_severity_selection(self, event, svrty, flaw, var, first_word):
         #print("selected widget: ", flaw)
@@ -1065,10 +1066,13 @@ class Jacket_Flaws(ctk.CTkFrame):
         if was_there:
             self.sentence_cnt += 1
 
-
     
     def get_flaw_dict(self):
         return self.flaw_dict
+    
+    def get_jacket_string(self):
+        return self.jacket_string
+    
 
 class Severity(ctk.CTkToplevel):
     def __init__(self, parent, first_word, svrty=None, flaw=None, var=None, is_list=False):

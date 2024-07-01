@@ -112,7 +112,7 @@ class Main(ctk.CTk):
                     crate_progress[crate] = "PRINT"
             i = 0
 
-            self.columns = {"CRATE": 0, "PRE\nPREP": 1, "  GRADING  ": 2, "  HIGHLIGHTS  ": 3, "   INTRO  ": 4, "RSL /\nPRICE": 5, "PRINT": 6}
+            self.columns = {"CRATE": 0, "PRE\nPREP": 1, "  GRADING  ": 2, "  HIGHLIGHTS  ": 3, "RSL /\nPRICE": 4, "PRINT": 5}
 
             # Styling separater line for corresponding theme
             style = ttk.Style()
@@ -153,7 +153,7 @@ class Main(ctk.CTk):
                     ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=4, pady=10, sticky='nsew', padx=10)
 
 
-                elif prog == "   INTRO  ":
+                elif prog == "RSL /\nPRICE":
                     # PLACE IN THE COLUMN FOR PREPREP, GRADING, AND HIGHLIGHTS
                     ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=2, pady=10, sticky='nsew', padx=10)
                     
@@ -162,21 +162,9 @@ class Main(ctk.CTk):
                     ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=6, pady=10, sticky='nsew', padx=10)
 
 
-
-                elif prog == "RSL /\nPRICE":
-                    # PLACE IN THE COLUMN FOR PREPREP, GRADING, HIGHLIGHTS, AND INTRO
-                    ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=2, pady=10, sticky='nsew', padx=10)
-                    
-                    ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=4, pady=10, sticky='nsew', padx=10)
-
-                    ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=6, pady=10, sticky='nsew', padx=10)
-
-                    ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=8, pady=10, sticky='nsew', padx=10)
-
-
                 elif prog == "  PRINT  " or txt.startswith("RSL"):
                     #print(txt + " : checklist")
-                    # PLACE IN THE COLUMN FOR PREPREP, GRADING, HIGHLIGHTS, INTRO, AND RSL /\nPRICE
+                    # PLACE IN THE COLUMN FOR PREPREP, GRADING, HIGHLIGHTS, AND RSL /\nPRICE
                     ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=2, pady=10, sticky='nsew', padx=10)
                     
                     ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=4, pady=10, sticky='nsew', padx=10)
@@ -184,8 +172,6 @@ class Main(ctk.CTk):
                     ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=6, pady=10, sticky='nsew', padx=10)
 
                     ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=8, pady=10, sticky='nsew', padx=10)
-
-                    ctk.CTkLabel(self.choose_file_frame_scrollable, text="\u2713", font=("Courier New Greek", 25)).grid(row=i+2, column=10, pady=10, sticky='nsew', padx=10)
 
 
                 i += 1
@@ -224,14 +210,11 @@ class Main(ctk.CTk):
         needs_hightlights = excel_file.get_row_indexes_needing_highlights(crate_num)
         needs_rsl = excel_file.get_row_indexes_needing_RSL(crate_num)
         needs_grading = excel_file.get_row_indexes_needing_grading(crate_num)
-        needs_intro = excel_file.get_row_indexes_needing_intro(crate_num)
 
         if len(needs_grading) != 0:
             return "  GRADING  "
         elif len(needs_hightlights) != 0:
             return "  HIGHLIGHTS  "
-        elif len(needs_intro) != 0:
-            return "   INTRO  "
         elif len(needs_rsl) != 0:
             return "RSL /\nPRICE"
         else:
@@ -314,8 +297,6 @@ class Main(ctk.CTk):
         #print("Indexes that need Grading: " + str(self.needs_grading))
         self.needs_rsl = self.xl_handle.get_row_indexes_needing_RSL(self.current_crate_num)
         #print("Indexes that need RSL: " + str(self.needs_rsl))
-        self.needs_description = self.xl_handle.get_row_indexes_needing_intro(self.current_crate_num)
-        #print("Indexes that need INTRO: " + str(self.needs_description))
 
         if len(self.needs_grading) != 0:
             self.progress_frame.set_progress("  GRADING  ")
@@ -327,11 +308,6 @@ class Main(ctk.CTk):
             self.display_bars()
             self.section2()
             self.title("HIGHLIGHTS")
-        elif len(self.needs_description) != 0:
-            self.progress_frame.set_progress("   INTRO  ")
-            self.display_bars()
-            self.section4()
-            self.title("INTRO")
         elif len(self.needs_rsl) != 0:
             self.progress_frame.set_progress("RSL /\nPRICE")
             self.display_bars()
@@ -346,6 +322,8 @@ class Main(ctk.CTk):
     def display_bars(self):
         self.progress_frame.grid(row=0, column=0, sticky='nsew', columnspan=7, padx=10, pady=10)
         
+
+    ## ---> PRE PREP <--- ##
     def section1(self):
 
         crate_index = self.xl_handle.is_crate_there(self.current_crate_num)
@@ -356,19 +334,23 @@ class Main(ctk.CTk):
         self.inputs.reset_fields()
         self.inputs.grid(row=1, column=0, rowspan=20, columnspan=7,sticky="nsew", padx=10, pady=10)
 
+    
+    ## ---> HIGHLIGHTS SECTION <--- ##
     def section2(self):
         second_sect = II.Frame2(self, self.needs_hightlights, self.xl_handle)
         second_sect.grid(row=1, column=0, rowspan=20, columnspan=7, padx=(10,10), sticky="nsew")
 
 
-
+    ## ---> GRADING SECTION <--- ##
     def section3(self):
-        
+
         self.third_sect = III.Frame2(self, self.needs_grading, self.xl_handle)
         self.third_sect.grid(row=1, column=0, rowspan=20, columnspan=7, padx=(10,10), sticky="nsew")
 
+
+    ####SECTION_TO_BE_REMOVED#####
     def section4(self):
-        self.third_sect = III.Intro_Outro(self, self.needs_description, self.xl_handle)
+        self.third_sect = III.Intros(self, self.needs_description, self.xl_handle)
         self.third_sect.grid(row=1, column=0, rowspan=20, columnspan=7, padx=(10,10), sticky="nsew")
 
     def section5(self):
